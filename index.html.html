@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEAL Prep · App de Entreno</title>
+  <style>
+    :root{
+      --bg:#0b0f12;
+      --panel:#12181d;
+      --panel2:#182127;
+      --line:#2a343c;
+      --text:#edf2f5;
+      --muted:#98a5af;
+      --accent:#8fa97c;
+      --danger:#c77979;
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#0a0d10,#11161b);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .hero,.card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:0 8px 24px rgba(0,0,0,.25);
+    }
+    .hero{padding:20px;margin-bottom:16px}
+    .eyebrow{
+      color:var(--accent);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    h1,h2,h3{margin:0 0 12px}
+    .sub{color:var(--muted);line-height:1.5;margin-bottom:14px}
+    .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .pill{
+      background:var(--panel2);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+    .pill .k{font-size:12px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+    .pill .v{font-weight:700}
+    .day-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+    .day-btn{
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--text);
+      cursor:pointer;
+      text-align:left;
+      font-size:15px;
+      font-weight:700;
+    }
+    .day-btn small{display:block;color:var(--muted);margin-bottom:6px;font-weight:400}
+    .day-btn.active{
+      border-color:var(--accent);
+      background:#182019;
+    }
+    .grid{display:grid;grid-template-columns:1.5fr .9fr;gap:16px}
+    .card{padding:18px}
+    .meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .tag{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:7px 12px;
+      color:var(--muted);
+      background:#10161a;
+      font-size:13px;
+    }
+    .exercise-list{display:grid;gap:10px}
+    .exercise{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#10161a;
+    }
+    .exercise input{margin-top:4px;transform:scale(1.2)}
+    .exercise-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:5px;
+      flex-wrap:wrap;
+    }
+    .exercise-name{font-weight:700}
+    .exercise-rest{font-size:13px;color:var(--accent)}
+    .exercise-detail{color:var(--muted);line-height:1.45}
+    .rule{
+      border-left:3px solid var(--accent);
+      background:#162018;
+      padding:12px;
+      border-radius:10px;
+      line-height:1.45;
+    }
+    .warn{
+      border-left:3px solid var(--danger);
+      background:#241818;
+      padding:12px;
+      border-radius:10px;
+      line-height:1.45;
+    }
+    .stack{display:grid;gap:14px}
+    .clock{
+      text-align:center;
+      font-size:44px;
+      font-weight:800;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:#0e1317;
+      margin-bottom:10px;
+    }
+    .timer-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+    button{
+      padding:11px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--panel2);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:700;
+    }
+    button.primary{background:#1b261d;border-color:#445247}
+    button.reset{background:#2a1c1c;border-color:#5c3e3e}
+    .checkline{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#10161a;
+    }
+    textarea{
+      width:100%;
+      min-height:120px;
+      resize:vertical;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#0f1418;
+      color:var(--text);
+      padding:12px;
+      font:inherit;
+    }
+    .tiny{font-size:12px;color:var(--muted)}
+    .footer{text-align:center;color:var(--muted);font-size:12px;padding:18px 0 28px}
+    @media (max-width:860px){
+      .quick,.day-nav,.grid,.timer-row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow">SEAL PREP · 4 SEMANAS</div>
+      <h1>App de entreno local</h1>
+      <div class="sub">Abre el día, marca los ejercicios, usa el temporizador y guarda notas. Todo se queda guardado en este navegador.</div>
+      <div class="quick">
+        <div class="pill"><div class="k">Frecuencia</div><div class="v">5 días / semana</div></div>
+        <div class="pill"><div class="k">Objetivo</div><div class="v">Preparación física + mental</div></div>
+        <div class="pill"><div class="k">Enfoque</div><div class="v">Fuerza + resistencia</div></div>
+        <div class="pill"><div class="k">Regla</div><div class="v">No negociar contigo mismo</div></div>
+      </div>
+    </div>
+
+    <div class="day-nav" id="dayNav"></div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 id="dayTitle">Día 1</h2>
+        <div class="meta" id="dayMeta"></div>
+        <div class="exercise-list" id="exerciseList"></div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <h3>Temporizador de descanso</h3>
+          <div class="clock" id="clock">01:30</div>
+          <div class="timer-row">
+            <button type="button" data-set="60">60 s</button>
+            <button type="button" data-set="90">90 s</button>
+            <button type="button" data-set="120">120 s</button>
+          </div>
+          <div class="timer-row">
+            <button type="button" class="primary" id="startPause">Iniciar</button>
+            <button type="button" id="plus15">+15 s</button>
+            <button type="button" class="reset" id="resetTimer">Reset</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Regla mental del día</h3>
+          <div class="rule" id="mentalRule"></div>
+        </div>
+
+        <div class="card">
+          <h3>Checklist rápida</h3>
+          <div class="stack" id="checklist"></div>
+        </div>
+
+        <div class="card">
+          <h3>Notas del día</h3>
+          <textarea id="notes" placeholder="Dominadas, sensaciones, tiempos, ajustes..."></textarea>
+          <div style="height:10px"></div>
+          <button type="button" class="primary" id="saveNotes">Guardar notas</button>
+          <div style="height:8px"></div>
+          <div class="tiny">Guardado local en este navegador.</div>
+        </div>
+
+        <div class="card">
+          <h3>Progresión del Día 5</h3>
+          <div class="warn">Semana 1 = 80/80/80 · Semana 2 = 100/100/100 · Semana 3 = 120/120/120 · Semana 4 = 150/150/150.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">HTML local · listo para abrir y entrenar</div>
+  </div>
+
+  <script>
+    const plan = [
+      {
+        key: "dia1",
+        short: "Día 1",
+        title: "Upper + dominadas",
+        tags: ["Fuerza superior", "Dominadas", "Finisher"],
+        rule: "Última serie de dominadas al límite real. No mires el móvil entre series.",
+        checklist: [
+          "Calienta 8-10 min",
+          "Técnica limpia en press y remo",
+          "Termina el finisher sin negociar"
+        ],
+        exercises: [
+          { name: "Dominadas", detail: "5 x máximo", rest: "90 s entre series · 2 min antes del siguiente ejercicio" },
+          { name: "Dominadas negativas", detail: "2 x 5", rest: "60 s entre series · 2 min antes del siguiente ejercicio" },
+          { name: "Press banca", detail: "5 x 5", rest: "90 s entre series · 2 min antes del siguiente ejercicio" },
+          { name: "Remo con barra", detail: "4 x 8", rest: "90 s entre series · 90 s antes del siguiente ejercicio" },
+          { name: "Fondos", detail: "3 x máximo", rest: "60 s entre series · 90 s antes del siguiente ejercicio" },
+          { name: "Finisher", detail: "40 flexiones + 40 abdominales", rest: "Sin descanso" }
+        ]
+      },
+      {
+        key: "dia2",
+        short: "Día 2",
+        title: "Pierna",
+        tags: ["Sentadilla", "Peso muerto", "Core"],
+        rule: "Piernas ardiendo no significa parar. Solo respiras y sigues.",
+        checklist: [
+          "Calienta cadera y tobillo",
+          "Controla la técnica del peso muerto",
+          "No te sientes entre series"
+        ],
+        exercises: [
+          { name: "Sentadilla", detail: "5 x 5", rest: "120 s entre series · 2 min antes del siguiente ejercicio" },
+          { name: "Peso muerto", detail: "4 x 6", rest: "120 s entre series · 2 min antes del siguiente ejercicio" },
+          { name: "Zancadas", detail: "3 x 12", rest: "90 s entre series · 90 s antes del siguiente ejercicio" },
+          { name: "Core", detail: "3 x 20", rest: "60 s entre series · 60 s antes del siguiente ejercicio" },
+          { name: "Finisher", detail: "60 sentadillas", rest: "Sin descanso" }
+        ]
+      },
+      {
+        key: "dia3",
+        short: "Día 3",
+        title: "Cardio + mental",
+        tags: ["Resistencia", "Cabeza", "Ritmo constante"],
+        rule: "No busques velocidad. Busca aguantar el ritmo sin romperte.",
+        checklist: [
+          "Cardio a ritmo constante",
+          "Sin pausa larga después del cardio",
+          "Respira, no dramatices"
+        ],
+        exercises: [
+          { name: "Correr o bici", detail: "25–35 min", rest: "Ritmo continuo" },
+          { name: "Flexiones", detail: "60 totales", rest: "Pausas mínimas" },
+          { name: "Abdominales", detail: "60 totales", rest: "Pausas mínimas" },
+          { name: "Sentadillas", detail: "60 totales", rest: "Pausas mínimas" }
+        ]
+      },
+      {
+        key: "dia4",
+        short: "Día 4",
+        title: "Circuito funcional",
+        tags: ["Circuito", "Fatiga real", "4 rondas"],
+        rule: "En el circuito no hay breaks: solo bajas ritmo si hace falta.",
+        checklist: [
+          "4 rondas completas",
+          "2 min de descanso entre rondas",
+          "No cortes una ronda a mitad"
+        ],
+        exercises: [
+          { name: "Dominadas", detail: "10 reps", rest: "Sin descanso dentro de la ronda" },
+          { name: "Kettlebell swings", detail: "15 reps", rest: "Sin descanso dentro de la ronda" },
+          { name: "Burpees", detail: "10 reps", rest: "Sin descanso dentro de la ronda" },
+          { name: "Battle rope", detail: "30 s", rest: "Sin descanso dentro de la ronda" },
+          { name: "Farmer carry", detail: "30 m", rest: "Sin descanso dentro de la ronda" },
+          { name: "Rondas", detail: "4 rondas", rest: "2 min entre rondas" }
+        ]
+      },
+      {
+        key: "dia5",
+        short: "Día 5",
+        title: "Resistencia progresiva",
+        tags: ["Volumen", "Disciplina", "Test mental"],
+        rule: "Aquí entrenas la cabeza. Divide en bloques si quieres, pero terminas sí o sí.",
+        checklist: [
+          "Marca el total de la semana",
+          "Mantén pausas mínimas",
+          "No maquilles repeticiones"
+        ],
+        exercises: [
+          { name: "Flexiones", detail: "S1: 80 · S2: 100 · S3: 120 · S4: 150", rest: "Mínimo posible" },
+          { name: "Abdominales", detail: "S1: 80 · S2: 100 · S3: 120 · S4: 150", rest: "Mínimo posible" },
+          { name: "Sentadillas", detail: "S1: 80 · S2: 100 · S3: 120 · S4: 150", rest: "Mínimo posible" }
+        ]
+      }
+    ];
+
+    const dayNav = document.getElementById("dayNav");
+    const dayTitle = document.getElementById("dayTitle");
+    const dayMeta = document.getElementById("dayMeta");
+    const exerciseList = document.getElementById("exerciseList");
+    const mentalRule = document.getElementById("mentalRule");
+    const checklist = document.getElementById("checklist");
+    const notes = document.getElementById("notes");
+    const saveNotesBtn = document.getElementById("saveNotes");
+
+    function safeGet(key){
+      try { return localStorage.getItem(key); } catch(e) { return null; }
+    }
+    function safeSet(key, value){
+      try { localStorage.setItem(key, value); } catch(e) {}
+    }
+
+    function renderDay(index){
+      const day = plan[index];
+      dayTitle.textContent = day.short + " · " + day.title;
+      mentalRule.textContent = day.rule;
+      dayMeta.innerHTML = day.tags.map(tag => '<span class="tag">' + tag + '</span>').join('');
+
+      exerciseList.innerHTML = '';
+      day.exercises.forEach((ex, i) => {
+        const checked = safeGet(day.key + '_ex_' + i) === '1';
+        const row = document.createElement('label');
+        row.className = 'exercise';
+        row.innerHTML =
+          '<input type="checkbox" ' + (checked ? 'checked' : '') + '>' +
+          '<div>' +
+            '<div class="exercise-title">' +
+              '<div class="exercise-name">' + ex.name + '</div>' +
+              '<div class="exercise-rest">' + ex.rest + '</div>' +
+            '</div>' +
+            '<div class="exercise-detail">' + ex.detail + '</div>' +
+          '</div>';
+        const box = row.querySelector('input');
+        box.addEventListener('change', () => safeSet(day.key + '_ex_' + i, box.checked ? '1' : '0'));
+        exerciseList.appendChild(row);
+      });
+
+      checklist.innerHTML = '';
+      day.checklist.forEach((item, i) => {
+        const checked = safeGet(day.key + '_mini_' + i) === '1';
+        const row = document.createElement('label');
+        row.className = 'checkline';
+        row.innerHTML = '<span>' + item + '</span><input type="checkbox" ' + (checked ? 'checked' : '') + '>';
+        const box = row.querySelector('input');
+        box.addEventListener('change', () => safeSet(day.key + '_mini_' + i, box.checked ? '1' : '0'));
+        checklist.appendChild(row);
+      });
+
+      notes.value = safeGet(day.key + '_notes') || '';
+      saveNotesBtn.onclick = function(){
+        safeSet(day.key + '_notes', notes.value);
+        const old = saveNotesBtn.textContent;
+        saveNotesBtn.textContent = 'Guardado';
+        setTimeout(() => saveNotesBtn.textContent = old, 900);
+      };
+
+      document.querySelectorAll('.day-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === index);
+      });
+
+      safeSet('sealprep_current_day', String(index));
+    }
+
+    plan.forEach((day, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'day-btn';
+      btn.innerHTML = '<small>' + day.short + '</small>' + day.title;
+      btn.addEventListener('click', () => renderDay(index));
+      dayNav.appendChild(btn);
+    });
+
+    let currentDay = parseInt(safeGet('sealprep_current_day') || '0', 10);
+    if (isNaN(currentDay) || currentDay < 0 || currentDay >= plan.length) currentDay = 0;
+    renderDay(currentDay);
+
+    // Timer
+    const clock = document.getElementById('clock');
+    const startPause = document.getElementById('startPause');
+    let base = 90;
+    let remaining = base;
+    let timerId = null;
+
+    function drawClock(){
+      const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const s = String(remaining % 60).padStart(2, '0');
+      clock.textContent = m + ':' + s;
+    }
+    function beep(){
+      try{
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        gain.gain.value = 0.03;
+        osc.frequency.value = 880;
+        osc.start();
+        setTimeout(() => { osc.stop(); ctx.close(); }, 250);
+      } catch(e){}
+      if (navigator.vibrate) navigator.vibrate([150,100,150]);
+    }
+    function startTimer(){
+      if (timerId) return;
+      timerId = setInterval(() => {
+        remaining--;
+        if (remaining <= 0){
+          remaining = 0;
+          clearInterval(timerId);
+          timerId = null;
+          startPause.textContent = 'Iniciar';
+          beep();
+        }
+        drawClock();
+      }, 1000);
+      startPause.textContent = 'Pausar';
+    }
+    function pauseTimer(){
+      if (timerId){
+        clearInterval(timerId);
+        timerId = null;
+      }
+      startPause.textContent = 'Iniciar';
+    }
+
+    document.querySelectorAll('[data-set]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        base = parseInt(btn.getAttribute('data-set'), 10);
+        remaining = base;
+        pauseTimer();
+        drawClock();
+      });
+    });
+
+    startPause.addEventListener('click', () => {
+      if (timerId) pauseTimer();
+      else startTimer();
+    });
+
+    document.getElementById('plus15').addEventListener('click', () => {
+      remaining += 15;
+      drawClock();
+    });
+
+    document.getElementById('resetTimer').addEventListener('click', () => {
+      remaining = base;
+      pauseTimer();
+      drawClock();
+    });
+
+    drawClock();
+  </script>
+</body>
+</html>
